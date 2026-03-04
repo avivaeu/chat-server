@@ -1,0 +1,27 @@
+serverName: chat.avivaeu.org
+
+certManager:
+  clusterIssuer: letsencrypt-prod
+
+ingress:
+  className: traefik
+
+synapse:
+  ingress:
+    host: matrix.chat.avivaeu.org
+
+elementWeb:
+  ingress:
+    host: web.chat.avivaeu.org
+
+elementAdmin:
+  ingress:
+    host: admin.chat.avivaeu.org
+
+matrixAuthenticationService:
+  ingress:
+    host: account.chat.avivaeu.org
+
+matrixRTC:
+  ingress:
+    host: mrtc.chat.avivaeu.org
