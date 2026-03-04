@@ -1,0 +1,35 @@
+# NOTE (next fresh deploy): size persistent storage to <=80% of node disk.
+# Example target on this VM class:
+# postgres.storage.size: 8Gi
+# synapse.media.storage.size: 16Gi
+
+matrixAuthenticationService:
+  additional:
+    auth.yaml:
+      config: |
+        account:
+          password_registration_enabled: true
+          registration_token_required: true
+          password_registration_email_required: true
+          password_recovery_enabled: true
+          login_with_email_allowed: true
+          password_change_allowed: true
+
+synapse:
+  media:
+    maxUploadSize: 5M
+  additional:
+    retention.yaml:
+      config: |
+        retention:
+          enabled: true
+          default_policy:
+            min_lifetime: 1d
+            max_lifetime: 90d
+          allowed_lifetime_min: 1d
+          allowed_lifetime_max: 365d
+          purge_jobs:
+            - longest_max_lifetime: 30d
+              interval: 12h
+            - shortest_max_lifetime: 30d
+              interval: 1d

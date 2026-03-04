@@ -6,8 +6,8 @@ matrixAuthenticationService:
           from: '"Aviva Chat" <no-reply@avivaeu.org>'
           reply_to: '"Aviva Chat" <no-reply@avivaeu.org>'
           transport: smtp
-          mode: tls
+          mode: starttls
           hostname: smtp.strato.de
-          port: 465
+          port: 587
           username: no-reply@avivaeu.org
-          password: '!Hj{ap1)G&trH>GqS&'
+          password: ''
