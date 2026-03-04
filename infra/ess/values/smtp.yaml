@@ -1,0 +1,13 @@
+matrixAuthenticationService:
+  additional:
+    smtp.yaml:
+      config: |
+        email:
+          from: '"Aviva Chat" <no-reply@avivaeu.org>'
+          reply_to: '"Aviva Chat" <no-reply@avivaeu.org>'
+          transport: smtp
+          mode: tls
+          hostname: smtp.strato.de
+          port: 465
+          username: no-reply@avivaeu.org
+          password: '!Hj{ap1)G&trH>GqS&'
