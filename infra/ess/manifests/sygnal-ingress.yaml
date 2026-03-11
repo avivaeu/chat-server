@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sygnal
+  namespace: ess
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - push.chat.avivaeu.org
+      secretName: sygnal-push-tls
+  rules:
+    - host: push.chat.avivaeu.org
+      http:
+        paths:
+          - path: /_matrix/push/v1/notify
+            pathType: Exact
+            backend:
+              service:
+                name: sygnal
+                port:
+                  name: http

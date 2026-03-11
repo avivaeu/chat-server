@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sygnal
+  namespace: ess
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sygnal
+  template:
+    metadata:
+      labels:
+        app: sygnal
+    spec:
+      containers:
+        - name: sygnal
+          image: matrixdotorg/sygnal:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SYGNAL_CONF
+              value: /sygnal/config/sygnal.yaml
+          ports:
+            - containerPort: 5000
+              name: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          volumeMounts:
+            - name: sygnal-config
+              mountPath: /sygnal/config/sygnal.yaml
+              subPath: sygnal.yaml
+              readOnly: true
+            - name: sygnal-apns
+              mountPath: /sygnal/secrets/apns
+              readOnly: true
+      volumes:
+        - name: sygnal-config
+          configMap:
+            name: sygnal-config
+            items:
+              - key: sygnal.yaml
+                path: sygnal.yaml
+        - name: sygnal-apns
+          secret:
+            secretName: sygnal-apns

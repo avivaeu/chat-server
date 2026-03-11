@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sygnal
+  namespace: ess
+spec:
+  selector:
+    app: sygnal
+  ports:
+    - name: http
+      port: 5000
+      targetPort: http
