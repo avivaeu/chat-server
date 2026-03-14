@@ -25,3 +25,7 @@ matrixAuthenticationService:
 matrixRTC:
   ingress:
     host: mrtc.chat.avivaeu.org
+
+wellKnownDelegation:
+  baseDomainRedirect:
+    enabled: false
