@@ -15,6 +15,7 @@ This folder contains a reproducible setup for Element Server Suite Community on 
 All records must point to your server public IP:
 
 - `chat.avivaeu.org`
+- `web.chat.avivaeu.org`
 - `matrix.chat.avivaeu.org`
 - `admin.chat.avivaeu.org`
 - `account.chat.avivaeu.org`
@@ -30,7 +31,7 @@ All records must point to your server public IP:
 Useful overrides:
 
 ```bash
-SERVER_IP=49.13.16.88 SSH_KEY=~/.ssh/id_aviva LETSENCRYPT_EMAIL=admin@avivaeu.org ./infra/ess/deploy.sh
+SERVER_IP=91.98.33.147 SSH_KEY=~/.ssh/id_aviva LETSENCRYPT_EMAIL=admin@avivaeu.org ./infra/ess/deploy.sh
 ```
 
 ## Teardown
@@ -101,6 +102,59 @@ After the iOS app registers its pusher, confirm:
 
 You can inspect pushers using Matrix Client-Server API `/_matrix/client/v3/pushers`.
 
+## Sygnal push gateway (Android FCM v1)
+
+Android clients register the Matrix pusher app id `org.avivaeu.chat.android`.
+Sygnal must include a matching app entry and a Firebase service account JSON.
+
+### 1) Prepare FCM service account secret
+
+Create a Firebase service account JSON from your Firebase project and load it
+into Kubernetes (do not commit real keys):
+
+```bash
+kubectl -n ess create secret generic sygnal-fcm \
+  --from-file=service-account.json=/path/to/firebase-service-account.json
+```
+
+If rotating the key:
+
+```bash
+kubectl -n ess delete secret sygnal-fcm
+kubectl -n ess create secret generic sygnal-fcm \
+  --from-file=service-account.json=/path/to/firebase-service-account.json
+```
+
+### 2) Configure Sygnal Android app mapping
+
+Edit `infra/ess/manifests/sygnal-configmap.yaml` and ensure:
+
+- app id `org.avivaeu.chat.android` exists under `apps`
+- `type: gcm`
+- `api_version: v1`
+- `project_id` matches your Firebase project id
+- `service_account_file: /sygnal/secrets/fcm/service-account.json`
+
+### 3) Apply updated manifests
+
+```bash
+kubectl apply -f infra/ess/manifests/sygnal-configmap.yaml
+kubectl apply -f infra/ess/manifests/sygnal-deployment.yaml
+kubectl apply -f infra/ess/manifests/sygnal-service.yaml
+kubectl apply -f infra/ess/manifests/sygnal-ingress.yaml
+```
+
+### 4) Verify Android delivery path
+
+```bash
+kubectl -n ess logs deployment/sygnal --tail=300
+```
+
+Expected:
+
+- no `unknown app ID org.avivaeu.chat.android` warnings
+- no `rejected pushkeys` for Android due to unknown app id
+
 ## kubectl access from local machine
 
 K3s official way is to copy `/etc/rancher/k3s/k3s.yaml` and update `server:`.
@@ -109,15 +163,15 @@ Example:
 
 ```bash
 mkdir -p ~/.kube
-ssh -i ~/.ssh/id_aviva root@49.13.16.88 "cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/config-aviva-ess
-perl -i -pe 's#https://127.0.0.1:6443#https://49.13.16.88:6443#g' ~/.kube/config-aviva-ess
+ssh -i ~/.ssh/id_aviva root@91.98.33.147 "cat /etc/rancher/k3s/k3s.yaml" > ~/.kube/config-aviva-ess
+perl -i -pe 's#https://127.0.0.1:6443#https://91.98.33.147:6443#g' ~/.kube/config-aviva-ess
 KUBECONFIG=~/.kube/config-aviva-ess kubectl get nodes
 ```
 
 Alternative via SSH tunnel:
 
 ```bash
-ssh -i ~/.ssh/id_aviva -L 6443:127.0.0.1:6443 root@49.13.16.88
+ssh -i ~/.ssh/id_aviva -L 6443:127.0.0.1:6443 root@91.98.33.147
 ```
 
 Then use kubeconfig with `server: https://127.0.0.1:6443` while the tunnel is open.

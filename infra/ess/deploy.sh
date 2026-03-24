@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ESS Community on single-node K3s (Hetzner VM)
 
-SERVER_IP="${SERVER_IP:-49.13.16.88}"
+SERVER_IP="${SERVER_IP:-91.98.33.147}"
 SSH_USER="${SSH_USER:-root}"
 SSH_KEY="${SSH_KEY:-$HOME/.ssh/id_aviva}"
 DOMAIN="${DOMAIN:-chat.avivaeu.org}"

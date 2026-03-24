@@ -4,7 +4,7 @@ Element Server Suite (Community) is deployed on a single Hetzner Ubuntu VM using
 
 ## Current deployment
 
-- Server: `49.13.16.88` (`ubuntu-4gb-fsn1-1`, Ubuntu 24.04)
+- Server: `91.98.33.147` (Hetzner `cx33`, Ubuntu 24.04)
 - Kubernetes: K3s single-node (`v1.34.4+k3s1`)
 - Ingress: Traefik (K3s default)
 - cert-manager: `v1.19.4` (installed separately via Helm OCI)
@@ -13,21 +13,25 @@ Element Server Suite (Community) is deployed on a single Hetzner Ubuntu VM using
 
 ## DNS used
 
-All records point to `49.13.16.88`:
+All records point to `91.98.33.147`:
 
 - `chat.avivaeu.org`
+- `web.chat.avivaeu.org`
 - `matrix.chat.avivaeu.org`
 - `admin.chat.avivaeu.org`
 - `account.chat.avivaeu.org`
 - `mrtc.chat.avivaeu.org`
+- `push.chat.avivaeu.org`
 
 ## Public endpoints
 
 - Element Web: `https://chat.avivaeu.org`
+- Element Web direct host: `https://web.chat.avivaeu.org`
 - Element Admin: `https://admin.chat.avivaeu.org`
 - Account (MAS): `https://account.chat.avivaeu.org`
 - Synapse ingress host: `https://matrix.chat.avivaeu.org`
 - RTC ingress host: `https://mrtc.chat.avivaeu.org`
+- Sygnal push ingress host: `https://push.chat.avivaeu.org/_matrix/push/v1/notify`
 
 ## Repo automation
 
@@ -37,6 +41,7 @@ Scripts and values are under `infra/ess`:
 - Teardown: `infra/ess/teardown.sh`
 - ESS values: `infra/ess/values/ess.yaml`
 - ClusterIssuer manifest: `infra/ess/manifests/clusterissuer.yaml`
+- VM migration runbook: `infra/ess/MIGRATION_RUNBOOK.md`
 
 Run deploy:
 
@@ -56,7 +61,7 @@ Run teardown:
 
 ```sshconfig
 Host aviva-chat
-  HostName 49.13.16.88
+  HostName 91.98.33.147
   User root
   IdentityFile ~/.ssh/id_aviva
   IdentitiesOnly yes
