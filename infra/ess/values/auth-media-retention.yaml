@@ -3,6 +3,10 @@
 # postgres.storage.size: 8Gi
 # synapse.media.storage.size: 16Gi
 
+postgres:
+  storage:
+    size: 12Gi
+
 matrixAuthenticationService:
   additional:
     auth.yaml:
@@ -10,7 +14,7 @@ matrixAuthenticationService:
         account:
           password_registration_enabled: true
           registration_token_required: true
-          password_registration_email_required: true
+          password_registration_email_required: false
           password_recovery_enabled: true
           login_with_email_allowed: true
           password_change_allowed: true
@@ -18,6 +22,8 @@ matrixAuthenticationService:
 synapse:
   media:
     maxUploadSize: 5M
+    storage:
+      size: 50Gi
   additional:
     retention.yaml:
       config: |
@@ -25,9 +31,9 @@ synapse:
           enabled: true
           default_policy:
             min_lifetime: 1d
-            max_lifetime: 90d
+            max_lifetime: 30d
           allowed_lifetime_min: 1d
-          allowed_lifetime_max: 365d
+          allowed_lifetime_max: 30d
           purge_jobs:
             - longest_max_lifetime: 30d
               interval: 12h

@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ess-chat-exceptions
+  namespace: ess
+  annotations:
+    traefik.ingress.kubernetes.io/router.priority: "500"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: chat.avivaeu.org
+      http:
+        paths:
+          - path: /oidc
+            pathType: Prefix
+            backend:
+              service:
+                name: ess-matrix-authentication-service
+                port:
+                  number: 80
+          - path: /element
+            pathType: Prefix
+            backend:
+              service:
+                name: ess-element-web
+                port:
+                  number: 80
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: ess-assetlinks
+                port:
+                  name: http

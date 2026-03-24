@@ -16,6 +16,17 @@ data:
             "relation": ["delegate_permission/common.handle_all_urls"],
             "target": {
               "namespace": "android_app",
+              "package_name": "org.avivaeu.chat",
+              "sha256_cert_fingerprints": [
+                "89:F8:76:8F:1C:61:BD:11:29:C0:14:6A:B6:D5:52:75:04:8B:26:7E:09:EE:D7:21:76:A0:50:5A:35:A2:18:AC",
+                "B9:2E:BC:EA:A8:F9:74:04:54:D7:77:9D:97:09:4C:92:47:C8:B5:97:16:A0:4A:C9:90:E8:63:D4:FD:95:4B:7B"
+              ]
+            }
+          },
+          {
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+              "namespace": "android_app",
               "package_name": "org.avivaeu.chat.debug",
               "sha256_cert_fingerprints": [
                 "B0:B0:51:DC:56:5C:81:2F:E1:7F:6F:3E:94:5B:4D:79:04:71:23:AB:0D:A6:12:86:76:9E:B2:94:91:97:13:0E"
@@ -23,6 +34,11 @@ data:
             }
           }
         ]';
+      }
+
+      location = /static/legal/privacy-policy {
+        default_type text/html;
+        return 200 '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aviva Chat Privacy Policy</title><style>body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.55;margin:2rem;max-width:860px}h1,h2{line-height:1.2}code{background:#f3f3f3;padding:.15rem .35rem;border-radius:4px}</style></head><body><h1>Aviva Chat Privacy Policy</h1><p><strong>Last updated:</strong> 2026-03-14</p><p>Aviva Chat is a self-hosted messaging service for the Aviva community over Matrix. This policy explains what data we process and why.</p><h2>1. Who we are</h2><ul><li><strong>Service:</strong> Aviva Chat</li><li><strong>Operator:</strong> Aviva</li><li><strong>Contact:</strong> privacy@avivaeu.org</li></ul><h2>2. Scope</h2><p>This policy applies to the Aviva Chat mobile apps and related server services at <code>chat.avivaeu.org</code>.</p><h2>3. Data we process</h2><ul><li>Account identifiers (such as Matrix user ID and profile data)</li><li>Messages, files, and media you send or receive</li><li>Technical diagnostics needed to operate and secure the service</li><li>Push notification tokens required to deliver notifications</li></ul><h2>4. Why we process data</h2><ul><li>Provide secure messaging and account functionality</li><li>Deliver Android and iOS push notifications</li><li>Operate, secure, and troubleshoot the service</li><li>Comply with legal obligations</li></ul><h2>5. Permissions used by the app</h2><ul><li><strong>Camera</strong> and <strong>Microphone</strong> for calls and media capture features</li><li><strong>Notifications</strong> for incoming messages and calls</li><li><strong>Storage/media access</strong> where needed for attachments</li></ul><h2>6. Data retention</h2><p>Aviva Chat applies a <strong>30-day retention policy</strong> for applicable server-side data and logs, unless a different period is required by law or security needs.</p><h2>7. Data sharing</h2><p>We do not sell personal data. We share data only with service providers required to operate Aviva Chat, including mobile push notification delivery services.</p><h2>8. Children</h2><p>Aviva Chat is not intended for children under 13 years of age.</p><h2>9. Your rights</h2><p>Depending on your jurisdiction, you may request access, correction, or deletion of your personal data by contacting privacy@avivaeu.org.</p><h2>10. Security</h2><p>We use reasonable technical and organizational safeguards to protect data. No system is guaranteed to be 100% secure.</p><h2>11. Changes to this policy</h2><p>We may update this policy and will update the date above when changes are made.</p></body></html>';
       }
 
       location / {
@@ -81,10 +97,22 @@ kind: Ingress
 metadata:
   name: ess-assetlinks
   namespace: ess
+  annotations:
+    traefik.ingress.kubernetes.io/router.priority: "500"
 spec:
   ingressClassName: traefik
   rules:
     - host: chat.avivaeu.org
+      http:
+        paths:
+          - path: /.well-known/assetlinks.json
+            pathType: Exact
+            backend:
+              service:
+                name: ess-assetlinks
+                port:
+                  name: http
+    - host: web.chat.avivaeu.org
       http:
         paths:
           - path: /.well-known/assetlinks.json
