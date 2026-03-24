@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: chat-to-web-redirect
+  namespace: ess
+spec:
+  redirectRegex:
+    regex: ^https?://chat\.avivaeu\.org(/.*)?$
+    replacement: https://web.chat.avivaeu.org$1
+    permanent: true

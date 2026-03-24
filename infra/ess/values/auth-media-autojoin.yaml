@@ -1,0 +1,9 @@
+synapse:
+  additional:
+    autojoin.yaml:
+      config: |
+        auto_join_rooms:
+          - "#aviva:chat.avivaeu.org"
+          - "#publico:chat.avivaeu.org"
+        autocreate_auto_join_rooms: false
+        auto_join_rooms_for_guests: false

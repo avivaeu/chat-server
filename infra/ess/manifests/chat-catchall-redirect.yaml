@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ess-chat-catchall-redirect
+  namespace: ess
+  annotations:
+    traefik.ingress.kubernetes.io/router.priority: "1"
+    traefik.ingress.kubernetes.io/router.middlewares: ess-chat-to-web-redirect@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: chat.avivaeu.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ess-element-web
+                port:
+                  number: 80
