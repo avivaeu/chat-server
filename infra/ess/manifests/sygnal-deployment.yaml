@@ -45,6 +45,9 @@ spec:
               mountPath: /sygnal/config/sygnal.yaml
               subPath: sygnal.yaml
               readOnly: true
+            - name: sygnal-fcm
+              mountPath: /sygnal/secrets/fcm
+              readOnly: true
             - name: sygnal-apns
               mountPath: /sygnal/secrets/apns
               readOnly: true
@@ -55,6 +58,9 @@ spec:
             items:
               - key: sygnal.yaml
                 path: sygnal.yaml
+        - name: sygnal-fcm
+          secret:
+            secretName: sygnal-fcm
         - name: sygnal-apns
           secret:
             secretName: sygnal-apns
