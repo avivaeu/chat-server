@@ -10,4 +10,4 @@ matrixAuthenticationService:
           hostname: smtp.strato.de
           port: 587
           username: no-reply@avivaeu.org
-          password: ''
+          password: '__SET_SMTP_PASSWORD__'

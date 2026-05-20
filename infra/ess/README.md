@@ -34,6 +34,56 @@ Useful overrides:
 SERVER_IP=91.98.33.147 SSH_KEY=~/.ssh/id_aviva LETSENCRYPT_EMAIL=admin@avivaeu.org ./infra/ess/deploy.sh
 ```
 
+## Local secrets + config rollout
+
+Use repo-local `.env` with generated values so secrets are never committed.
+
+### 1) Prepare local env
+
+```bash
+cp aviva-chat-server/.env.example aviva-chat-server/.env
+```
+
+Set real values in `aviva-chat-server/.env`:
+
+- `ZITADEL_CLIENT_ID`
+- `ZITADEL_CLIENT_SECRET`
+- `SMTP_PASSWORD`
+
+### 2) Render generated values
+
+```bash
+./aviva-chat-server/infra/ess/scripts/render-values.sh
+```
+
+This generates:
+
+- `aviva-chat-server/infra/ess/values/generated/local-secrets.yaml`
+
+### 3) Deploy config update
+
+```bash
+./aviva-chat-server/infra/ess/scripts/deploy-config.sh
+```
+
+The script deploys with values in this order (last one wins):
+
+1. `infra/ess/values/ess.yaml`
+2. `infra/ess/values/auth-media-retention.yaml`
+3. `infra/ess/values/smtp.yaml`
+4. `infra/ess/values/generated/local-secrets.yaml`
+
+Optional overrides:
+
+```bash
+ESS_RELEASE=ess ESS_NAMESPACE=ess ESS_CHART=oci://ghcr.io/element-hq/ess-helm/matrix-stack ./aviva-chat-server/infra/ess/scripts/deploy-config.sh
+```
+
+Notes:
+
+- `aviva-chat-server/.env` and `infra/ess/values/generated/` are gitignored.
+- Keep placeholders in committed values files; only generated overlay contains real secrets.
+
 ## Teardown
 
 ```bash
