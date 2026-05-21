@@ -18,6 +18,13 @@ spec:
                 name: ess-matrix-authentication-service
                 port:
                   number: 80
+          - path: /oauth
+            pathType: Prefix
+            backend:
+              service:
+                name: ess-matrix-authentication-service
+                port:
+                  number: 80
           - path: /element
             pathType: Prefix
             backend:

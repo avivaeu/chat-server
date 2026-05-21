@@ -70,8 +70,9 @@ The script deploys with values in this order (last one wins):
 
 1. `infra/ess/values/ess.yaml`
 2. `infra/ess/values/auth-media-retention.yaml`
-3. `infra/ess/values/smtp.yaml`
-4. `infra/ess/values/generated/local-secrets.yaml`
+3. `infra/ess/values/auth-media-autojoin.yaml`
+4. `infra/ess/values/smtp.yaml`
+5. `infra/ess/values/generated/local-secrets.yaml`
 
 Optional overrides:
 

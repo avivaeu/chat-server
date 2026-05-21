@@ -11,13 +11,16 @@ matrixAuthenticationService:
   additional:
     auth.yaml:
       config: |
+        passwords:
+          enabled: false
+
         account:
-          password_registration_enabled: true
-          registration_token_required: true
+          password_registration_enabled: false
+          registration_token_required: false
           password_registration_email_required: false
-          password_recovery_enabled: true
-          login_with_email_allowed: true
-          password_change_allowed: true
+          password_recovery_enabled: false
+          login_with_email_allowed: false
+          password_change_allowed: false
 
         upstream_oauth2:
           providers:
