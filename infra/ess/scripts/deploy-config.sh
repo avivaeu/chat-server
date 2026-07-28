@@ -10,6 +10,7 @@ RENDER_SCRIPT="${RENDER_SCRIPT:-${SCRIPT_DIR}/render-values.sh}"
 ESS_RELEASE="${ESS_RELEASE:-ess}"
 ESS_NAMESPACE="${ESS_NAMESPACE:-ess}"
 ESS_CHART="${ESS_CHART:-oci://ghcr.io/element-hq/ess-helm/matrix-stack}"
+ESS_CHART_VERSION="${ESS_CHART_VERSION:-26.5.1}"
 
 VALUES_BASE="${REPO_ROOT}/infra/ess/values/ess.yaml"
 VALUES_AUTH="${REPO_ROOT}/infra/ess/values/auth-media-retention.yaml"
@@ -32,13 +33,20 @@ for file in "${VALUES_BASE}" "${VALUES_AUTH}" "${VALUES_AUTOJOIN}" "${VALUES_SMT
 done
 
 helm upgrade --install "${ESS_RELEASE}" "${ESS_CHART}" \
+  --version "${ESS_CHART_VERSION}" \
   --namespace "${ESS_NAMESPACE}" \
   --create-namespace \
+  --server-side false \
   -f "${VALUES_BASE}" \
   -f "${VALUES_AUTH}" \
   -f "${VALUES_AUTOJOIN}" \
   -f "${VALUES_SMTP}" \
   -f "${VALUES_LOCAL}" \
   --wait --timeout 25m
+
+kubectl apply -f "${REPO_ROOT}/infra/ess/manifests/matrix-rtc-cors-middleware.yaml"
+kubectl annotate ingress ess-matrix-rtc -n "${ESS_NAMESPACE}" \
+  traefik.ingress.kubernetes.io/router.middlewares=ess-matrix-rtc-cors@kubernetescrd \
+  --overwrite
 
 echo "Deployed ${ESS_RELEASE} in namespace ${ESS_NAMESPACE}"

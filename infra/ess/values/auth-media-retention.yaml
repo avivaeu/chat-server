@@ -15,8 +15,9 @@ matrixAuthenticationService:
           enabled: false
 
         account:
+          email_change_allowed: false
           password_registration_enabled: false
-          registration_token_required: false
+          registration_token_required: true
           password_registration_email_required: false
           password_recovery_enabled: false
           login_with_email_allowed: false
@@ -35,13 +36,13 @@ matrixAuthenticationService:
               claims_imports:
                 localpart:
                   action: require
-                  template: "{{ user.preferred_username }}"
+                  template: "{{ user.email.split('@')[0] | lower }}"
                   on_conflict: set
                 displayname:
                   action: suggest
                   template: "{{ user.name }}"
                 email:
-                  action: suggest
+                  action: require
                   template: "{{ user.email }}"
 
 synapse:

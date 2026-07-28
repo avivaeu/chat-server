@@ -8,7 +8,7 @@ Element Server Suite (Community) is deployed on a single Hetzner Ubuntu VM using
 - Kubernetes: K3s single-node (`v1.34.4+k3s1`)
 - Ingress: Traefik (K3s default)
 - cert-manager: `v1.19.4` (installed separately via Helm OCI)
-- ESS chart: `oci://ghcr.io/element-hq/ess-helm/matrix-stack` (release `26.2.3`)
+- ESS chart: `oci://ghcr.io/element-hq/ess-helm/matrix-stack` (release `26.5.1`)
 - Namespace: `ess`
 
 ## DNS used
@@ -23,6 +23,11 @@ All records point to `91.98.33.147`:
 - `mrtc.chat.avivaeu.org`
 - `push.chat.avivaeu.org`
 
+Guest DNS records:
+
+- `guest-chat.avivaeu.org`
+- `matrix.guest-chat.avivaeu.org`
+
 ## Public endpoints
 
 - Element Web: `https://chat.avivaeu.org`
@@ -33,15 +38,26 @@ All records point to `91.98.33.147`:
 - RTC ingress host: `https://mrtc.chat.avivaeu.org`
 - Sygnal push ingress host: `https://push.chat.avivaeu.org/_matrix/push/v1/notify`
 
+Guest instance:
+
+- Guest Element Call host: `https://guest-chat.avivaeu.org`
+- Guest Synapse host: `https://matrix.guest-chat.avivaeu.org`
+
 ## Repo automation
 
-Scripts and values are under `infra/ess`:
+Main ESS scripts and values are under `infra/ess`:
 
 - Deploy: `infra/ess/deploy.sh`
 - Teardown: `infra/ess/teardown.sh`
 - ESS values: `infra/ess/values/ess.yaml`
 - ClusterIssuer manifest: `infra/ess/manifests/clusterissuer.yaml`
 - VM migration runbook: `infra/ess/MIGRATION_RUNBOOK.md`
+
+Guest-only resources are under `guest/`:
+
+- Deploy: `guest/deploy.sh`
+- Guest values: `guest/values/guest.yaml`
+- DNS helper: `guest/scripts/create-dns.sh`
 
 Run deploy:
 
@@ -140,6 +156,85 @@ Example:
 kubectl exec -n ess deployment/ess-matrix-authentication-service -- \
   mas-cli manage register-user --yes avivaadmin --password 'ChangeMeToAVeryStrongPassword' --admin --email 'admin@avivaeu.org'
 ```
+
+## Enable registration with token
+
+This applies to MAS password registration. If users only log in via Zitadel/OIDC, this does not create a separate self-service signup flow.
+
+In `infra/ess/values/auth-media-retention.yaml`, enable password registration and require a token:
+
+```yaml
+matrixAuthenticationService:
+  additional:
+    auth.yaml:
+      config: |
+        account:
+          password_registration_enabled: true
+          password_registration_token_required: true
+```
+
+Generate a token with MAS CLI:
+
+```bash
+kubectl exec -n ess deployment/ess-matrix-authentication-service -- \
+  mas-cli manage issue-user-registration-token --usage-limit 1 --expires-in 24h
+```
+
+If you want the token to be reusable, increase `--usage-limit` or use `--unlimited`.
+
+Notes:
+
+- `registration_token_required` is the deprecated name; prefer `password_registration_token_required`.
+- This only works if `password_registration_enabled: true`.
+- If you want email mandatory during registration, keep `password_registration_email_required: true`.
+
+## Delete a user
+
+Use exact identifiers only. First resolve the exact MAS username and Synapse MXID for the target email, then clean that one account.
+
+1. Issue an admin compatibility token from `avivaadmin`:
+
+```bash
+kubectl exec -n ess deployment/ess-matrix-authentication-service -- \
+  mas-cli manage issue-compatibility-token avivaadmin AIAgentAdminToken --yes-i-want-to-grant-synapse-admin-privileges
+```
+
+2. Use that token for the Synapse admin APIs:
+
+```bash
+curl -X POST -H "Authorization: Bearer <token>" -H 'Content-Type: application/json' \
+  -d '{"rooms":[]}' \
+  'https://matrix.chat.avivaeu.org/_synapse/admin/v1/user/%40<mxid>%3Achat.avivaeu.org/redact'
+
+curl -X DELETE -H "Authorization: Bearer <token>" \
+  'https://matrix.chat.avivaeu.org/_synapse/admin/v1/users/%40<mxid>%3Achat.avivaeu.org/media'
+
+curl -X POST -H "Authorization: Bearer <token>" -H 'Content-Type: application/json' \
+  -d '{"erase":true}' \
+  'https://matrix.chat.avivaeu.org/_synapse/admin/v1/deactivate/%40<mxid>%3Achat.avivaeu.org'
+```
+
+3. Remove the MAS-side account access:
+
+```bash
+kubectl exec -n ess deployment/ess-matrix-authentication-service -- \
+  mas-cli manage kill-sessions <username>
+
+kubectl exec -n ess deployment/ess-matrix-authentication-service -- \
+  mas-cli manage lock-user <username> --deactivate
+```
+
+4. Remove the email binding for the exact user/email pair.
+
+Preferred path: use the MAS Admin API `DELETE /api/admin/v1/user-emails/{id}` with a `urn:mas:admin` personal session.
+
+Fallback for this deployment: delete the exact `user_emails` row in Postgres by `user_id` and `lower(email)`.
+
+5. Verify:
+
+- Synapse `joined_rooms` is `0`
+- MAS sessions are finished
+- The exact email no longer exists in `matrixauthenticationservice.user_emails`
 
 ## Notes
 

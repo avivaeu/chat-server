@@ -1,0 +1,25 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: matrix-rtc-cors
+  namespace: ess
+spec:
+  headers:
+    accessControlAllowCredentials: true
+    accessControlAllowHeaders:
+      - Content-Type
+      - Authorization
+      - X-Requested-With
+      - Date
+    accessControlAllowMethods:
+      - GET
+      - HEAD
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+    accessControlAllowOriginList:
+      - https://web.chat.avivaeu.org
+      - https://guest-chat.avivaeu.org
+    accessControlMaxAge: 600
+    addVaryHeader: true

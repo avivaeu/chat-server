@@ -1,0 +1,21 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "launchOptions": {
+      "channel": "chrome",
+      "headless": false,
+      "userDataDir": "/tmp/chrome-webrtc-test",
+      "args": [
+        "--no-sandbox",
+      ]
+    },
+    "contextOptions": {
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "ignoreHTTPSErrors": true,
+      "permissions": ["microphone", "notifications"]
+    }
+  }
+}

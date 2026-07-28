@@ -9,10 +9,29 @@ ingress:
 synapse:
   ingress:
     host: matrix.chat.avivaeu.org
+  additional:
+    guest-federation.yaml:
+      config: |
+        federation_domain_whitelist:
+          - guest-chat.avivaeu.org
 
 elementWeb:
   ingress:
     host: web.chat.avivaeu.org
+  additional:
+    guest-access: |
+      {
+        "features": {
+          "feature_ask_to_join": true
+        },
+        "element_call": {
+          "guest_spa_url": "https://guest-chat.avivaeu.org"
+        }
+      }
+    permalink-config: |
+      {
+        "permalink_prefix": "https://web.chat.avivaeu.org"
+      }
 
 elementAdmin:
   ingress:

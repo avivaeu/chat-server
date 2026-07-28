@@ -8,7 +8,7 @@ This folder contains a reproducible setup for Element Server Suite Community on 
 - Helm
 - cert-manager (OCI chart)
 - ClusterIssuer `letsencrypt-prod` (HTTP-01 via Traefik)
-- ESS Community (`oci://ghcr.io/element-hq/ess-helm/matrix-stack`)
+- ESS Community (`oci://ghcr.io/element-hq/ess-helm/matrix-stack`, pinned in scripts to `26.5.1`)
 
 ## Required DNS
 

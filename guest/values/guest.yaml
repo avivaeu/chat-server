@@ -1,0 +1,62 @@
+serverName: guest-chat.avivaeu.org
+
+certManager:
+  clusterIssuer: letsencrypt-prod
+
+ingress:
+  className: traefik
+
+elementAdmin:
+  enabled: false
+
+hookshot:
+  enabled: false
+
+matrixAuthenticationService:
+  enabled: false
+
+matrixRTC:
+  enabled: false
+
+elementWeb:
+  enabled: false
+
+synapse:
+  ingress:
+    host: matrix.guest-chat.avivaeu.org
+  media:
+    maxUploadSize: 2M
+    storage:
+      size: 2Gi
+  additional:
+    guest-access.yaml:
+      config: |
+        enable_registration: true
+        enable_registration_without_verification: true
+        registrations_require_3pid: []
+        registration_requires_token: false
+        disable_msisdn_registration: true
+        presence:
+          enabled: false
+        enable_search: false
+        max_event_delay_duration: 24h
+        experimental_features:
+          msc3266_enabled: true
+          msc4222_enabled: true
+        public_baseurl: https://matrix.guest-chat.avivaeu.org/
+        federation_domain_whitelist:
+          - chat.avivaeu.org
+
+wellKnownDelegation:
+  baseDomainRedirect:
+    enabled: false
+  additional:
+    client: |
+      {
+        "org.matrix.msc4143.rtc_foci": [
+          {
+            "type": "livekit",
+            "livekit_service_url": "https://mrtc.chat.avivaeu.org"
+          }
+        ]
+      }
