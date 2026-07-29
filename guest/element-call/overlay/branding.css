@@ -1,0 +1,112 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap");
+
+/* ============================================================
+   Aviva brand theme — Compound Design System tokens
+   Source of truth: app.css (--brand-accent #e2a200, ink #000,
+   Montserrat/Poppins) — the same palette used across avivaeu.org
+   (gold accent on white, white/gold on black in dark contexts).
+   ============================================================ */
+
+:root {
+  --cpd-font-family-sans: "Montserrat", sans-serif;
+
+  /* Brand accent — Aviva gold, identical in both themes */
+  --cpd-color-border-accent: #e2a200;
+  --cpd-color-text-action-accent: #e2a200;
+  --cpd-color-bg-action-primary-rest: #e2a200;
+  --cpd-color-bg-action-primary-hovered: #cf9700;
+  --cpd-color-bg-action-primary-pressed: #ba8600;
+  --cpd-color-border-focused: #e2a200;
+
+  /* Text/icon on top of solid gold buttons — ink, not white,
+     for AA contrast against #e2a200 (matches app.css --pico-primary-inverse) */
+  --cpd-color-icon-on-solid-primary: #141414;
+  --cpd-color-text-on-solid-primary: #141414;
+
+  /* Light theme (default) */
+  --cpd-color-text-primary: #141414;
+  --cpd-color-text-secondary: rgba(20, 20, 20, 0.72);
+  --cpd-color-text-tertiary: rgba(20, 20, 20, 0.56);
+  --cpd-color-bg-canvas-default: #ffffff;
+  --cpd-color-bg-subtle-primary: #f4f4f4;
+  --cpd-color-bg-subtle-secondary: #faf7ef;
+  --cpd-color-border-interactive-primary: rgba(20, 20, 20, 0.12);
+  --cpd-color-border-interactive-secondary: rgba(20, 20, 20, 0.16);
+  --cpd-color-icon-primary: #141414;
+  --cpd-color-icon-secondary: rgba(20, 20, 20, 0.72);
+  --cpd-color-icon-tertiary: rgba(20, 20, 20, 0.56);
+}
+
+body {
+  background-color: var(--cpd-color-bg-canvas-default);
+  color: var(--cpd-color-text-primary);
+  color-scheme: light;
+  font-family: "Montserrat", sans-serif;
+}
+
+body[data-background="gradient"]::before,
+body[data-background="gradient"][data-platform="desktop"]::before {
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+.cpd-typography-body,
+.cpd-typography-heading {
+  font-family: "Montserrat", sans-serif;
+}
+
+a,
+button,
+[role="button"] {
+  font-family: "Poppins", "Montserrat", sans-serif;
+}
+
+/* --- Dark theme ---
+   Aviva's own dark surfaces (e.g. the black header/footer on
+   avivaeu.org, black app icon with gold/white wordmark) use pure
+   black backgrounds with white text and the same gold accent —
+   not a washed-out light theme. */
+.cpd-theme-dark,
+.cpd-theme-dark-hc {
+  color-scheme: dark;
+
+  --cpd-color-bg-canvas-default: #141414;
+  --cpd-color-bg-subtle-primary: #1f1f1f;
+  --cpd-color-bg-subtle-secondary: #262019;
+
+  --cpd-color-text-primary: #ffffff;
+  --cpd-color-text-secondary: rgba(255, 255, 255, 0.72);
+  --cpd-color-text-tertiary: rgba(255, 255, 255, 0.56);
+
+  --cpd-color-icon-primary: #ffffff;
+  --cpd-color-icon-secondary: rgba(255, 255, 255, 0.72);
+  --cpd-color-icon-tertiary: rgba(255, 255, 255, 0.56);
+
+  --cpd-color-border-interactive-primary: rgba(255, 255, 255, 0.16);
+  --cpd-color-border-interactive-secondary: rgba(255, 255, 255, 0.24);
+
+  /* Gold accent stays constant across themes */
+  --cpd-color-border-accent: #e2a200;
+  --cpd-color-text-action-accent: #e2a200;
+  --cpd-color-border-focused: #e2a200;
+
+  --cpd-color-bg-action-primary-rest: #e2a200;
+  --cpd-color-bg-action-primary-hovered: #f0b21c;
+  --cpd-color-bg-action-primary-pressed: #ffbf33;
+
+  --cpd-color-icon-on-solid-primary: #141414;
+  --cpd-color-text-on-solid-primary: #141414;
+}
+
+.cpd-theme-dark body,
+.cpd-theme-dark-hc body {
+  color-scheme: dark;
+}

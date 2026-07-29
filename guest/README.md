@@ -32,6 +32,7 @@ Create these Cloudflare A records to the VM public IP:
 - `guest/deploy.sh`
 - `guest/values/guest.yaml`
 - `guest/scripts/create-dns.sh`
+- `guest/scripts/build-element-call.sh`
 - `guest/manifests/element-call.yaml`
 
 ## Deploy
@@ -41,6 +42,9 @@ Create these Cloudflare A records to the VM public IP:
 ```
 
 Defaults to `~/.kube/aviva-netcup.yaml` with context `aviva-netcup`.
+The deploy script also syncs the local-only GAR key from
+`pentecostes/.secrets/gar-pull-key.json` into `guest-ess` as `gar-pull`.
+Keep that JSON file out of source control.
 
 ## Cloudflare DNS
 
@@ -49,4 +53,6 @@ The DNS helper only creates or updates the two guest A records above and does no
 ## Deployment model
 
 - `guest/values/guest.yaml` keeps the guest ESS release on Synapse only
-- `guest/manifests/element-call.yaml` deploys the standalone `ghcr.io/element-hq/element-call:v0.20.0` SPA outside Helm
+- `guest/scripts/build-element-call.sh` builds and pushes the branded SPA image to GAR
+- `guest/manifests/element-call.yaml` deploys the branded `guest-element-call` image outside Helm
+- `guest/deploy.sh` syncs the local GAR pull secret and rolls out the SPA

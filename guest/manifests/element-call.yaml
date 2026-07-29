@@ -35,9 +35,11 @@ spec:
       labels:
         app: guest-element-call
     spec:
+      imagePullSecrets:
+        - name: gar-pull
       containers:
         - name: element-call
-          image: ghcr.io/element-hq/element-call:v0.20.0
+          image: europe-west1-docker.pkg.dev/gen-lang-client-0990085838/pentecostes/guest-element-call:v0.20.0-aviva1-9a1529d
           ports:
             - name: http
               containerPort: 8080
