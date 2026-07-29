@@ -43,6 +43,9 @@ synapse:
         experimental_features:
           msc3266_enabled: true
           msc4222_enabled: true
+        rc_delayed_event_mgmt:
+          per_second: 5
+          burst_count: 50
         public_baseurl: https://matrix.guest-chat.avivaeu.org/
         federation_domain_whitelist:
           - chat.avivaeu.org
