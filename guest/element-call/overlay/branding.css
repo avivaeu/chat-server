@@ -44,11 +44,28 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
+/* Subtle brand-colored wash instead of the default gradient —
+   soft gold on light, warm gold glow fading to black on dark. */
 body[data-background="gradient"]::before,
 body[data-background="gradient"][data-platform="desktop"]::before {
-  content: none !important;
-  background: none !important;
-  background-image: none !important;
+  background: radial-gradient(
+    120% 100% at 50% 0%,
+    rgba(226, 162, 0, 0.10) 0%,
+    rgba(226, 162, 0, 0.03) 45%,
+    rgba(255, 255, 255, 0) 75%
+  ) !important;
+  background-image: none;
+}
+
+.cpd-theme-dark body[data-background="gradient"]::before,
+.cpd-theme-dark-hc body[data-background="gradient"]::before,
+.cpd-theme-dark body[data-background="gradient"][data-platform="desktop"]::before,
+.cpd-theme-dark-hc body[data-background="gradient"][data-platform="desktop"]::before {
+  background: radial-gradient(
+    120% 90% at 50% 0%,
+    rgba(226, 162, 0, 0.18) 0%,
+    rgba(20, 20, 20, 0) 60%
+  ) !important;
 }
 
 h1,
